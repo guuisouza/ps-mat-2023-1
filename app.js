@@ -32,6 +32,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 /********************************/
 const users = require('./routes/users')
-app.use('users', users)
+app.use('/users', users)
 
 module.exports = app;
