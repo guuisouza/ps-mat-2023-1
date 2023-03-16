@@ -10,3 +10,41 @@ $ npx sequelize-cli model:generate --name PaymentMethod --attributes  descriptio
 
 const paymentMethods = require('./routes/payment_methods')
 app.use('/payment_methods', paymentMethods)
+
+//Comando para gerar apenas uma migration (sem model)
+npx sequelize-cli migration:generate --name alter-table-users
+
+//Ligando uma chave estrangeira a outra tabela
+npx sequelize-cli migration:generate --name alter-table-customers
+- No "async up" da migration nova que foi criada copie e cole o codigo abaixo:
+//Cria a chave estrangeira da tabela customers para a tabela cities
+await queryInterface.addConstraint('customers', {
+    fields: ['city_id'], //Campo(s) da tabela de origem
+    type: 'foreing key',
+    //nome da chave estrangeira(deve ser unico do BD)
+    name: 'customers_cities_fk', 
+    references: {
+        table: 'cities',    //Tabela estrangeira
+        field: 'id'         //Campo da tabela estrangeira
+    },
+    onDelete: 'Restrict' //Não deixa apagar uma city em uso no customer
+    onUpdate: 'CASCADE' //Atualiza city_id em customer se id em city mudar
+})
+
+- No "async down" da migration vamos digitar:
+//Reverte as alterações do up()
+await queryInterface.removeConstraint('customers, customers_cities_fk')
+
+ao finalizar damos um db:migrate
+
+Indo no model do custommer na area static associate(models) digitaremos:
+    this.belongsTo(models.City, { //Nome do campo na tabela de ORIGEM
+        foreignKey: 'city_id',    //Nome do campo na tabela de DESTINO
+        targetKey: 'id',          //Nome do atributo para exibição
+        as: 'city'
+    })
+Indo no controller do customer
+const {Customer, City}
+Agora indo no retrieve e no .findAll({
+    include: {model: City, as: 'city'}
+})
