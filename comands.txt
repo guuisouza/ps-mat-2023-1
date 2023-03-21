@@ -48,3 +48,79 @@ const {Customer, City}
 Agora indo no retrieve e no .findAll({
     include: {model: City, as: 'city'}
 })
+
+////////////////////////// AULA 21/03
+Indo no model do city na area static associate(models) digitaremos:
+    this.hasMany(models.Customer, { //Nome do campo na tabela de ORIGEM
+        foreignKey: 'city_id',    //Campo da tabela estrangeira
+        sourceKey: 'id',          //Campo da tabela local
+        as: 'customers'           //Nome do campo de associação (plural)
+    })
+//Indo no controller do city dentro do City.findAll digite:
+City.findAll({
+    include: {model: Customer, as: 'customers'}
+})
+e importe o Customer na const da linha 2
+
+//Agora vamos fazer o customer_tag que tem 2 chaves
+1° passo daremos o comando:
+npx sequelize-cli migration:generate --name alter-table-customers-tags
+Depois damos um ctrl C no async up da migration do customer e colamos na nova que fizemos agora
+
+await queryInterface.addConstraint('customer_tags', {
+    fields: ['customer_id'], //Campo(s) da tabela de origem
+    type: 'foreing key',
+    //nome da chave estrangeira(deve ser unico do BD)
+    name: 'customers_tags_customers_fk', 
+    references: {
+        table: 'customers',    //Tabela estrangeira
+        field: 'id'         //Campo da tabela estrangeira
+    },
+    onDelete: 'RESTRICT' //Não deixa apagar uma city em uso no customer
+    onUpdate: 'CASCADE' //Atualiza customer_id em customer_tags se id em customers mudar
+})
+
+Agora copiamos e vamos fazer a segunda chave
+
+await queryInterface.addConstraint('customer_tags', {
+    fields: ['tag_id'], //Campo(s) da tabela de origem
+    type: 'foreing key',
+    //nome da chave estrangeira(deve ser unico do BD)
+    name: 'customers_tags_tags_fk', 
+    references: {
+        table: 'tags',    //Tabela estrangeira
+        field: 'id'         //Campo da tabela estrangeira
+    },
+    onDelete: 'RESTRICT' //Não deixa apagar uma city em uso no customer
+    onUpdate: 'CASCADE' //Atualiza customer_id em customer_tags se id em customers mudar
+})
+
+no async down digitraemos: (queryInterface, Sequelize) {
+    await queryInterface.removeConstraint('customer_tags, customers_tags_tags_fk')
+    await queryInterface.removeConstraint('customer_tags, customers_tags_customers_fk')
+}
+
+ao finalizar damos um db:migrate
+
+agora vá na model do customer e adicione
+
+this.hasMany(models.CustomerTag, {
+    foreignKey: customer_id,
+    sourceKey: 'id',
+    as: 'tags' 
+})
+
+agora no controller do customer adicione no findAll
+{model: CustomerTag, as: 'tags'}
+e importe o CustomerTag la encima
+
+Agora indo no customer tag (model) adicione o belongsTo no associate:
+this.belongsTo(models.Customer, { //Nome do campo na tabela de ORIGEM
+        foreignKey: 'customer_id',    //Nome do campo na tabela de DESTINO
+        targetKey: 'id',          //Nome do atributo para exibição
+        as: 'customer'
+    })
+
+    Agora no controller do customer_tag  importe o Customer
+    e coloque o no findAll o include 
+    include: {model: Customer, as: 'customer'}
