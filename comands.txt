@@ -1,7 +1,7 @@
 //Gerar model + migration
-$ npx sequelize-cli model:generate --name User --attributes id:integer,name:string,email:string,verified_email:boolean,is_admin:boolean,phone:string,password:string
+$ npx sequelize-cli model:generate --name User --attributes name:string,email:string,verified_email:boolean,is_admin:boolean,phone:string,password:string
 
-$ npx sequelize-cli model:generate --name Channel --attributes id:integer,description:string,comission_fee:decimal
+$ npx sequelize-cli model:generate --name Channel --attributes description:string,comission_fee:decimal
 
 $ npx sequelize-cli model:generate --name PaymentMethod --attributes  description:string,operator_fee:decimal 
 2° passo: ajustar a migration colocando em snake_case no up de no down e ajustar o tamanho das strings (30) por exemplo
@@ -124,3 +124,60 @@ this.belongsTo(models.Customer, { //Nome do campo na tabela de ORIGEM
     Agora no controller do customer_tag  importe o Customer
     e coloque o no findAll o include 
     include: {model: Customer, as: 'customer'}
+
+///////////// Aula 23/03
+
+Agora indo no model da tag adicionaremos um hasMany
+this.hasMany(models.CustomerTag, {
+    foreignKey: tag_id,
+    sourceKey: 'id',
+    as: 'customers' 
+})
+
+Agora no controller da tag e importamos o CustomerTag no require
+Em seguida no findAll fazemos um include
+const data = await Tag.findAll({
+    include: { model: CustomerTag, as: 'customers'}}
+)
+
+agora indo no model do customer_tag para fazer o belongsTo
+this.belongsTo(models.Tag, {
+    foreignKey: tag_id,
+    sourceKey: id
+    as: tag
+})
+
+No controller, quando temos um include e queremos colocar mais um temos que fazer ele virar um vetor
+const data = await CustomerTag.findAll({
+    include: [
+        { model: Customer, as: 'customer' },
+        { model: Tag, as: 'tag' }
+    ]
+})
+
+No model no customer em associate comente o hasMany dele e faremos
+this.belongsToMany(models.Tag, {
+    through: 'customer_tags', //Tabela intermediária
+    foreignKey: 'customer_id, //Chave estrangeira
+    otherKey: 'tag_id', //Outra chave da tabela intermediária
+    as: 'tags          //Nome do campo de associação (Plural)
+})
+
+No controller do customer no findAll deixaremos no include e importaremos a Tag no require
+const data = await Customer.findAll ({
+    include: [
+        {model: City, as: 'city'},
+        {model: Tag, as: 'tags}
+    ]
+})
+
+No model da tag comentaremos o hasMany
+this.belongsToMany(models.Tag, {
+    through: 'customer_tags', //Tabela intermediária
+    foreignKey: 'tag_id', //Chave estrangeira
+    otherKey: 'customer_id', //Outra chave da tabela intermediária
+    as: 'customers'          //Nome do campo de associação (Plural)
+})
+
+No controller da tag no findAll importamos o Customer no retrieve
+include: {model: Customer, as: 'customers'}
