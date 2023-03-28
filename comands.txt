@@ -58,6 +58,7 @@ Indo no model do city na area static associate(models) digitaremos:
     })
 //Indo no controller do city dentro do City.findAll digite:
 City.findAll({
+    
     include: {model: Customer, as: 'customers'}
 })
 e importe o Customer na const da linha 2
