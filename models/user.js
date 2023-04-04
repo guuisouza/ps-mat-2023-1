@@ -49,7 +49,21 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'User',
-    tableName: 'users' //tabela com o U minusculo
+    tableName: 'users', //tabela com o U minusculo
+    //Esconde o campo "password" no retrieve e no retrieveOne
+    defaultScope: {
+      attributes: {
+        exclude: ['password']
+      }
+    },
+    scopes: {
+      //Inclui o campo "password"
+      withPassword: {
+        attributes: {
+          include: ['password']
+        }
+      }
+    }
   });
   return User;
 };
