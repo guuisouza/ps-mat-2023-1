@@ -1,6 +1,6 @@
 // Importar o model correspondente ao controller
 
-const { Customer, City } = require('../models')
+const { Customer, City, Tag } = require('../models')
 
 const controller = {}
 
@@ -27,7 +27,10 @@ controller.create = async (req, res) => {
 controller.retrieve = async (req, res) => {
     try{
         const data = await Customer.findAll({
-            include: {model: City, as: 'city'}
+            include: [
+                { model: City, as: 'city' },
+                { model: Tag, as: 'tags' }
+            ]
         })
         //HTTP 200: OK (implicito)
         res.send(data)

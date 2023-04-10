@@ -173,7 +173,7 @@ const data = await Customer.findAll ({
 })
 
 No model da tag comentaremos o hasMany
-this.belongsToMany(models.Tag, {
+this.belongsToMany(models.Customer, {
     through: 'customer_tags', //Tabela intermediária
     foreignKey: 'tag_id', //Chave estrangeira
     otherKey: 'customer_id', //Outra chave da tabela intermediária
