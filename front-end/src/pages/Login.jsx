@@ -21,7 +21,7 @@ export default function Login() {
             let response = await fetch('http://localhost:3333/users/login', {
                 method: "POST",
                 body: JSON.stringify({ email, password }),
-                header: { "Content-type": "application/json; charset=UTF-8" }
+                headers: { "Content-type": "application/json; charset=UTF-8" }
             })
             console.log({ response })
         }
