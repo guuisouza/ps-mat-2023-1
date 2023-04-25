@@ -108,7 +108,7 @@ controller.login = async (req, res) => {
         const user = await User.scope('withPassword').findOne({ where: { email: req.body.email } })
 
         //Usuário não encontrado -> HTTP 401: Unauthorized
-        if (!user) return res.sataus(401).end()
+        if (!user) return res.status(401).end()
 
         const pwMatches = await bcrypt.compare(req.body.password, user.password)
 
