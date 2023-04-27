@@ -7,6 +7,7 @@ import Backdrop from '@mui/material/Backdrop'
 import CircularProgress from '@mui/material/CircularProgress'
 import Snackbar from '@mui/material/Snackbar'
 import Alert from '@mui/material/Alert'
+import myfetch from '../utils/myfetch'
 
 export default function Login() {
     /* Criando 2 variaveis de estado para email e senha e associando aos campos */
@@ -37,88 +38,76 @@ export default function Login() {
         event.preventDefault() //Impede o recarregamento da página
         setShowWaiting(true)      //Mostra o spinner de espera
         try {
-            let response = await fetch('http://localhost:3333/users/login', {
-                method: "POST",
-                body: JSON.stringify({ email, password }),
-                headers: { "Content-type": "application/json; charset=UTF-8" }
+
+            const result = await myfetch.post('/users/login', { email, password })
+
+            window.localStorage.setItem('token', result.token)
+            //Exibe o snackbar de sucesso
+
+            setSnack({
+                show: true,
+                message: 'Autenticação realizada com sucesso!',
+                severity: 'success'
             })
-
-            console.log(response)
-
-            if (response.ok) {
-                const result = await response.json()
-
-                console.log({ result })
-
-                //Grava o token recebido no localStorage
-                //ISSO É UM SÉRIO PROBLEMA DE SEGURANÇA, temos de consertar depois
-                window.localStorage.setItem('token', result.token)
-
-                //Exibe o snackbar de sucesso
-                setSnack({
-                    show: true,
-                    message: 'Autenticação realizada com sucesso!',
-                    severity: 'success'
-                })
-            }
-            else throw new Error('Usuário ou senha incorretos')
-
         }
         catch (error) {
             console.error(error)
+            
+            //Apaga o token de autenticação no localStorage, caso esxista
+            window.localStorage.removeItem('token')
             //Exibe o snackbar de erro
             setSnack({
                 show: true,
                 message: error.message,
                 severity: 'error'
             })
-        }
-        finally { //Sempre vai ser executado
-            setShowWaiting(false) //Esconde o spinner de espera 
-        }
     }
+    finally { //Sempre vai ser executado
+        setShowWaiting(false) //Esconde o spinner de espera 
+    }
+}
 
-    /*Comunicação do backend com o frontend 
-    Metodos: xmlhttpRequest e o fetch
+/*Comunicação do backend com o frontend 
+Metodos: xmlhttpRequest e o fetch
 
-    Axios facilita usar o xmlhttpRequest
-    Ky facilita usar o fetch
+Axios facilita usar o xmlhttpRequest
+Ky facilita usar o fetch
 
 
-    
-    */
-    return (
-        <>
-            <Backdrop
-                sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
-                open={showWaiting}
-            >
-                <CircularProgress color="inherit" />
-            </Backdrop>
+ 
+*/
+return (
+    <>
+        <Backdrop
+            sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+            open={showWaiting}
+        >
+            <CircularProgress color="inherit" />
+        </Backdrop>
 
-            <Snackbar open={snack.show} autoHideDuration={4000} onClose={handleSnackClose}>
-                <Alert onClose={handleSnackClose} severity={snack.severity} sx={{ width: '100%' }}>
-                    {snack.message}
-                </Alert>
-            </Snackbar>
+        <Snackbar open={snack.show} autoHideDuration={4000} onClose={handleSnackClose}>
+            <Alert onClose={handleSnackClose} severity={snack.severity} sx={{ width: '100%' }}>
+                {snack.message}
+            </Alert>
+        </Snackbar>
 
-            <Typography variant="h3" component="h1" sx={{ textAlign: 'center' }}>
-                Autentique-se
+        <Typography variant="h3" component="h1" sx={{ textAlign: 'center' }}>
+            Autentique-se
+        </Typography>
+        <Paper sx={{
+            width: '512px',
+            maxWidth: '90%',
+            margin: '25px auto 0 auto',
+            p: '12px'
+        }}>
+            <Typography variant="h5" component="div">
+                <form onSubmit={handleSubmit}>
+                    <TextField className='form-field' id="email" name="email" label="E-mail" variant="filled" fullWidth onChange={handleChange} value={email} />
+                    <TextField className='form-field' id="password" name="password" label="Senha" variant="filled" type="password" fullWidth onChange={handleChange} value={password} />
+                    <Button variant="contained" type="submit" color="secondary" fullWidth>Enviar</Button>
+                </form>
             </Typography>
-            <Paper sx={{
-                width: '512px',
-                maxWidth: '90%',
-                margin: '25px auto 0 auto',
-                p: '12px'
-            }}>
-                <Typography variant="h5" component="div">
-                    <form onSubmit={handleSubmit}>
-                        <TextField className='form-field' id="email" name="email" label="E-mail" variant="filled" fullWidth onChange={handleChange} value={email} />
-                        <TextField className='form-field' id="password" name="password" label="Senha" variant="filled" type="password" fullWidth onChange={handleChange} value={password} />
-                        <Button variant="contained" type="submit" color="secondary" fullWidth>Enviar</Button>
-                    </form>
-                </Typography>
-            </Paper>
-        </>
-    )
+        </Paper>
+    </>
+)
 }
