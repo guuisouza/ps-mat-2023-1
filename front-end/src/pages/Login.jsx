@@ -8,6 +8,7 @@ import CircularProgress from '@mui/material/CircularProgress'
 import Snackbar from '@mui/material/Snackbar'
 import Alert from '@mui/material/Alert'
 import myfetch from '../utils/myfetch'
+import PageTitle from '../components/ui/PageTitle'
 
 export default function Login() {
     /* Criando 2 variaveis de estado para email e senha e associando aos campos */
@@ -91,9 +92,8 @@ return (
             </Alert>
         </Snackbar>
 
-        <Typography variant="h3" component="h1" sx={{ textAlign: 'center' }}>
-            Autentique-se
-        </Typography>
+        <PageTitle title="Autentique-se"/>
+
         <Paper sx={{
             width: '512px',
             maxWidth: '90%',
