@@ -41,4 +41,10 @@ myfetch.get = async function (path) {
     else throw new Error(getErrorDescription(response))
 }
 
+myfetch.delete = async function (path) {
+    const response = await fetch(baseUrl + path, defaultOptions(null, 'DELETE'))
+    if(response.ok) return true //Não irá retornar .json
+    else throw new Error(getErrorDescription(response))
+}
+
 export default myfetch
