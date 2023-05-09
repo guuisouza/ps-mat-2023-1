@@ -5,6 +5,7 @@ import Login from './pages/Login'
 import HeaderBar from './components/ui/HeaderBar'
 import Box from '@mui/material/Box'
 import PaymentMethodList from './pages/payment_method/PaymentMethodList'
+import PaymentMethodForm from './pages/payment_method/PaymentMethodForm'
 
 //Protect routes
 function AuthGuard({children}) {
@@ -20,9 +21,10 @@ function App() {
         <HeaderBar />
         <Box sx={{ m:'25px auto', p: '25px'}}>
           <Routes>
-            <Route path="/" element={ <AuthGuard> <Home /> </AuthGuard>}/>
             <Route path="/login" element={<Login />}/>
+            <Route path="/" element={ <AuthGuard> <Home /> </AuthGuard>}/>
             <Route path="/payment_method" element={<AuthGuard> <PaymentMethodList/> </AuthGuard>}/>
+            <Route path="/payment_method/new" element={<AuthGuard> <PaymentMethodForm/> </AuthGuard>}/>
           </Routes>
         </Box>
       </BrowserRouter>
