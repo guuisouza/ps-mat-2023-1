@@ -5,8 +5,7 @@ import TextField from '@mui/material/TextField'
 import Button from '@mui/material/Button'
 import Backdrop from '@mui/material/Backdrop'
 import CircularProgress from '@mui/material/CircularProgress'
-import Snackbar from '@mui/material/Snackbar'
-import Alert from '@mui/material/Alert'
+import Notification from '../components/ui/Notification'
 import myfetch from '../utils/myfetch'
 import PageTitle from '../components/ui/PageTitle'
 
@@ -15,7 +14,7 @@ export default function Login() {
     const [email, setEmail] = React.useState('')
     const [password, setPassword] = React.useState('')
     const [showWaiting, setShowWaiting] = React.useState(false)
-    const [snack, setSnack] = React.useState({
+    const [notif, setNotif] = React.useState({
         show: false,
         message: '',
         severity: 'sucess' //ou 'error'
@@ -26,12 +25,12 @@ export default function Login() {
         else setPassword(event.target.value)
     }
 
-    function handleSnackClose(event, reason) {
+    function handleNotifClose(event, reason) {
         if (reason === 'clickaway') {
             return;
         }
 
-        setSnack({ show: false })
+        setNotif({ show: false })
     }
 
     /* Submit que envia os dados dos campos ao back-end */
@@ -45,7 +44,7 @@ export default function Login() {
             window.localStorage.setItem('token', result.token)
             //Exibe o snackbar de sucesso
 
-            setSnack({
+            setNotif({
                 show: true,
                 message: 'Autenticação realizada com sucesso!',
                 severity: 'success'
@@ -57,7 +56,7 @@ export default function Login() {
             //Apaga o token de autenticação no localStorage, caso esxista
             window.localStorage.removeItem('token')
             //Exibe o snackbar de erro
-            setSnack({
+            setNotif({
                 show: true,
                 message: error.message,
                 severity: 'error'
@@ -86,11 +85,13 @@ return (
             <CircularProgress color="inherit" />
         </Backdrop>
 
-        <Snackbar open={snack.show} autoHideDuration={4000} onClose={handleSnackClose}>
-            <Alert onClose={handleSnackClose} severity={snack.severity} sx={{ width: '100%' }}>
-                {snack.message}
-            </Alert>
-        </Snackbar>
+        <Notification 
+            show={notif.show} 
+            severity={notif.severity}
+            onClose={handleNotifClose}
+        >
+            {notif.message}
+        </Notification>
 
         <PageTitle title="Autentique-se"/>
 

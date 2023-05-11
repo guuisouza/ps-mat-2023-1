@@ -6,20 +6,32 @@ import Fab from '@mui/material/Fab';
 import myfetch from '../../utils/myfetch';
 import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
+import Notification from '../../components/ui/Notification';
+import { useNavigate } from 'react-router-dom';
+import PaymentMethod from '../../models/PaymentMethod'
+
 
 export default function PaymentMethodForm() {
     const API_PATH = '/payment_methods'
 
+    const navigate = useNavigate()
+
     const [state, setState] = React.useState({
         paymentMethod: {}, //Objeto vazio
-        showWaiting: false
+        showWaiting: false,
+        notif: {
+            show: false,
+            severity: 'success',
+            message: ''
+        }
     })
     const {
         paymentMethod,
-        showWaiting
+        showWaiting,
+        notif
     } = state
 
-    function handleFromFieldChange(event){
+    function handleFormFieldChange(event){
         const paymentMethodCopy = {...paymentMethod}
         paymentMethodCopy[event.target.name] = event.target.value
         setState({...state, paymentMethod: paymentMethodCopy})
@@ -35,16 +47,45 @@ export default function PaymentMethodForm() {
     async function sendData(){
         setState({...state, showWaiting: true})
         try{
+
+            //Chama a validação da biblioteca Joi
+            await PaymentMethod.validateAsync(paymentMethod)
+
             await myfetch.post(API_PATH, paymentMethod)
-            //Dar feedback positivo e voltar para a listagem
-            alert('Salvou')
-            setState({...state, showWaiting:false})
+            setState({
+                ...state,
+                showWaiting: false,
+                notif: {
+                    severity: 'success',
+                    show: true,
+                    message: 'Novo item salvo com sucesso'
+                }
+            })
         }
         catch{
-            console.error(error)
+            console.error(error) //Arrumar aqui
             //DAR FEEDBACK NEGATIVO
-            setState({...state,showWaiting: false})
+            setState({
+                ...state,
+                showWaiting: false,
+                notif: {
+                    severity: 'error',
+                    show: true,
+                    message: 'ERRO: ' + error.message
+                }
+            })
         }
+    }
+
+    function handleNotifClose(event, reason) {
+        if (reason === 'clickaway') {
+            return;
+        }
+        
+        //Se o item foi salvo com sucesso, retorna à pagina de listagem
+        if(notif.severity === 'success') navigate(-1)
+
+        setState({...state, notif: { ...notif, show: false} })
     }
 
     return (
@@ -56,6 +97,14 @@ export default function PaymentMethodForm() {
                 <CircularProgress color="inherit" />
             </Backdrop>
 
+            <Notification 
+                show={notif.show} 
+                severity={notif.severity}
+                onClose={handleNotifClose}
+            >
+                {notif.message}
+            </Notification>
+
             <PageTitle title="Cadastrar novo método de pagamento" />
 
             <form onSubmit={handleFormSubmit}>
@@ -66,7 +115,7 @@ export default function PaymentMethodForm() {
                     required
                     name="description" //Nome do campo na tabela
                     value={paymentMethod.description} //Nome do campo na tabela
-                    onChange={handleFromFieldChange}
+                    onChange={handleFormFieldChange}
                 />
 
                 <TextField 
@@ -77,7 +126,7 @@ export default function PaymentMethodForm() {
                     required
                     name="operator_fee" //Nome do campo na tabela
                     value={paymentMethod.operator_fee} //Nome do campo na tabela
-                    onChange={handleFromFieldChange}
+                    onChange={handleFormFieldChange}
                 />
 
                 <Fab variant="extended" color="secondary" type="submit">
