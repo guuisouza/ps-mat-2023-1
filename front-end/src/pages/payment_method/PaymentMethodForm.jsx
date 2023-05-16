@@ -9,6 +9,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import Notification from '../../components/ui/Notification';
 import { useNavigate } from 'react-router-dom';
 import PaymentMethod from '../../models/PaymentMethod'
+import getValidationMessages from '../../utils/getValidationMessages';
 
 
 export default function PaymentMethodForm() {
@@ -17,7 +18,11 @@ export default function PaymentMethodForm() {
     const navigate = useNavigate()
 
     const [state, setState] = React.useState({
-        paymentMethod: {}, //Objeto vazio
+        paymentMethod: {
+            description: '',
+            operator_fee: ''
+        },
+        errors: {},
         showWaiting: false,
         notif: {
             show: false,
@@ -27,6 +32,7 @@ export default function PaymentMethodForm() {
     })
     const {
         paymentMethod,
+        errors,
         showWaiting,
         notif
     } = state
@@ -45,7 +51,7 @@ export default function PaymentMethodForm() {
     }
 
     async function sendData(){
-        setState({...state, showWaiting: true})
+        setState({...state, showWaiting: true, errors: {}})
         try{
 
             //Chama a validação da biblioteca Joi
@@ -62,15 +68,18 @@ export default function PaymentMethodForm() {
                 }
             })
         }
-        catch{
+        catch(error){
+            const { validationError, errorMessages } = getValidationMessages(error)
+
             console.error(error) //Arrumar aqui
             //DAR FEEDBACK NEGATIVO
             setState({
                 ...state,
                 showWaiting: false,
+                errors: errorMessages,
                 notif: {
                     severity: 'error',
-                    show: true,
+                    show: !validationError,
                     message: 'ERRO: ' + error.message
                 }
             })
@@ -116,6 +125,8 @@ export default function PaymentMethodForm() {
                     name="description" //Nome do campo na tabela
                     value={paymentMethod.description} //Nome do campo na tabela
                     onChange={handleFormFieldChange}
+                    error={errors?.description}
+                    helperText={errors?.description}
                 />
 
                 <TextField 
@@ -127,6 +138,8 @@ export default function PaymentMethodForm() {
                     name="operator_fee" //Nome do campo na tabela
                     value={paymentMethod.operator_fee} //Nome do campo na tabela
                     onChange={handleFormFieldChange}
+                    error={errors?.operator_fee}
+                    helperText={errors?.operator_fee}
                 />
 
                 <Fab variant="extended" color="secondary" type="submit">
