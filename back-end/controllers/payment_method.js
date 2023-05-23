@@ -26,7 +26,9 @@ controller.create = async (req, res) => {
 
 controller.retrieve = async (req, res) => {
     try{
-        const data = await PaymentMethod.findAll()
+        const data = await PaymentMethod.findAll({
+            order: [['description', 'asc']]
+        })
         //HTTP 200: OK (implicito)
         res.send(data)
     }
