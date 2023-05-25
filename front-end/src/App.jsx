@@ -10,6 +10,8 @@ import ShipmentPriorityList from './pages/shipment_priority/ShipmentPriorityList
 import ShipmentPriorityForm from './pages/shipment_priority/ShipmentPriorityForm'
 import CarrierList from './pages/carrier/CarrierList'
 import CarrierForm from './pages/carrier/CarrierForm'
+import ChannelList from './pages/channel/ChannelList'
+import ChannelForm from './pages/channel/ChannelForm'
 
 //Protect routes
 function AuthGuard({children}) {
@@ -36,6 +38,9 @@ function App() {
             <Route path="/carrier" element={<AuthGuard> <CarrierList/> </AuthGuard>}/>
             <Route path="/carrier/new" element={<AuthGuard> <CarrierForm/> </AuthGuard>}/>
             <Route path="/carrier/:id" element={<AuthGuard> <CarrierForm/> </AuthGuard>}/>
+            <Route path="/channel" element={<AuthGuard> <ChannelList/> </AuthGuard>}/>
+            <Route path="/channel/new" element={<AuthGuard> <ChannelForm/> </AuthGuard>}/>
+            <Route path="/channel/:id" element={<AuthGuard> <ChannelForm/> </AuthGuard>}/>
           </Routes>
         </Box>
       </BrowserRouter>
