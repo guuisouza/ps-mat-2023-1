@@ -8,19 +8,20 @@ import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
 import Notification from '../../components/ui/Notification';
 import { useNavigate, useParams } from 'react-router-dom';
-import PaymentMethod from '../../models/PaymentMethod'
+import ShipmentPriority from '../../models/ShipmentPriority'
 import getValidationMessages from '../../utils/getValidationMessages';
 
-export default function PaymentMethodForm() {
-    const API_PATH = '/payment_methods'
+
+export default function ShipmentPriorityForm() {
+
+    const API_PATH = '/shipment_priorities'
 
     const navigate = useNavigate()
     const params = useParams()
 
     const [state, setState] = React.useState({
-        paymentMethod: {
+        shipmentPriority: {
             description: '',
-            operator_fee: ''
         },
         errors: {},
         showWaiting: false,
@@ -31,16 +32,16 @@ export default function PaymentMethodForm() {
         }
     })
     const {
-        paymentMethod,
+        shipmentPriority,
         errors,
         showWaiting,
         notif
     } = state
 
     function handleFormFieldChange(event){
-        const paymentMethodCopy = {...paymentMethod}
-        paymentMethodCopy[event.target.name] = event.target.value
-        setState({...state, paymentMethod: paymentMethodCopy})
+        const shipmentPriorityCopy = {...shipmentPriority}
+        shipmentPriorityCopy[event.target.name] = event.target.value
+        setState({...state, shipmentPriority: shipmentPriorityCopy})
     }
 
     function handleFormSubmit(event) {
@@ -52,7 +53,7 @@ export default function PaymentMethodForm() {
 
     //Este useEffect será executado apenas durante o carregamento inicial da página
     React.useEffect(()=>{
-        //Se houver parâmetro ud na rota, devemos carregar um registro
+        //Se houver parâmetro id na rota, devemos carregar um registro
         //existente para edição
         if(params.id) fetchData()
     }, [])
@@ -63,7 +64,7 @@ export default function PaymentMethodForm() {
             const result = await myfetch.get(`${API_PATH}/${params.id}`)
             setState({
                 ...state,
-                paymentMethod: result,
+                shipmentPriority: result,
                 showWaiting: false
             })
         }
@@ -87,13 +88,13 @@ export default function PaymentMethodForm() {
         try{
 
             //Chama a validação da biblioteca Joi
-            await PaymentMethod.validateAsync(paymentMethod, { abortEarly: false })
+            await ShipmentPriority.validateAsync(shipmentPriority, { abortEarly: false })
 
             //Registro já existe: chama PUT para atualizar
-            if (params.id) await myfetch.put(`${API_PATH}/${params.id}`, paymentMethod)
+            if (params.id) await myfetch.put(`${API_PATH}/${params.id}`, shipmentPriority)
 
             //Registro não existe: chama POST para criar 
-            else await myfetch.post(API_PATH, paymentMethod)
+            else await myfetch.post(API_PATH, shipmentPriority)
 
             setState({
                 ...state,
@@ -151,7 +152,7 @@ export default function PaymentMethodForm() {
                 {notif.message}
             </Notification>
 
-            <PageTitle title={params.id ? "Editar método de pagamento" : "Cadastrar novo método de pagamento"} />
+            <PageTitle title={params.id ? "Editar descrição" : "Cadastrar nova descrição"} />
 
             <form onSubmit={handleFormSubmit}>
                 <TextField 
@@ -160,23 +161,10 @@ export default function PaymentMethodForm() {
                     fullWidth
                     required
                     name="description" //Nome do campo na tabela
-                    value={paymentMethod.description} //Nome do campo na tabela
+                    value={shipmentPriority.description} //Nome do campo na tabela
                     onChange={handleFormFieldChange}
                     error={errors?.description}
                     helperText={errors?.description}
-                />
-
-                <TextField 
-                    label="Taxa de operação" 
-                    variant="filled" 
-                    type="number"
-                    fullWidth
-                    required
-                    name="operator_fee" //Nome do campo na tabela
-                    value={paymentMethod.operator_fee} //Nome do campo na tabela
-                    onChange={handleFormFieldChange}
-                    error={errors?.operator_fee}
-                    helperText={errors?.operator_fee}
                 />
 
                 <Fab variant="extended" color="secondary" type="submit">

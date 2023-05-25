@@ -8,19 +8,18 @@ import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
 import Notification from '../../components/ui/Notification';
 import { useNavigate, useParams } from 'react-router-dom';
-import PaymentMethod from '../../models/PaymentMethod'
+import Carrier from '../../models/Carrier'
 import getValidationMessages from '../../utils/getValidationMessages';
 
-export default function PaymentMethodForm() {
-    const API_PATH = '/payment_methods'
+export default function CarrierForm() {
+    const API_PATH = '/carriers'
 
     const navigate = useNavigate()
     const params = useParams()
 
     const [state, setState] = React.useState({
-        paymentMethod: {
-            description: '',
-            operator_fee: ''
+        carrier: {
+            name: ''
         },
         errors: {},
         showWaiting: false,
@@ -31,16 +30,16 @@ export default function PaymentMethodForm() {
         }
     })
     const {
-        paymentMethod,
+        carrier,
         errors,
         showWaiting,
         notif
     } = state
 
     function handleFormFieldChange(event){
-        const paymentMethodCopy = {...paymentMethod}
-        paymentMethodCopy[event.target.name] = event.target.value
-        setState({...state, paymentMethod: paymentMethodCopy})
+        const carrierCopy = {...carrier}
+        carrierCopy[event.target.name] = event.target.value
+        setState({...state, carrier: carrierCopy})
     }
 
     function handleFormSubmit(event) {
@@ -63,7 +62,7 @@ export default function PaymentMethodForm() {
             const result = await myfetch.get(`${API_PATH}/${params.id}`)
             setState({
                 ...state,
-                paymentMethod: result,
+                carrier: result,
                 showWaiting: false
             })
         }
@@ -87,13 +86,13 @@ export default function PaymentMethodForm() {
         try{
 
             //Chama a validação da biblioteca Joi
-            await PaymentMethod.validateAsync(paymentMethod, { abortEarly: false })
+            await Carrier.validateAsync(carrier, { abortEarly: false })
 
             //Registro já existe: chama PUT para atualizar
-            if (params.id) await myfetch.put(`${API_PATH}/${params.id}`, paymentMethod)
+            if (params.id) await myfetch.put(`${API_PATH}/${params.id}`, carrier)
 
             //Registro não existe: chama POST para criar 
-            else await myfetch.post(API_PATH, paymentMethod)
+            else await myfetch.post(API_PATH, carrier)
 
             setState({
                 ...state,
@@ -151,32 +150,19 @@ export default function PaymentMethodForm() {
                 {notif.message}
             </Notification>
 
-            <PageTitle title={params.id ? "Editar método de pagamento" : "Cadastrar novo método de pagamento"} />
+            <PageTitle title={params.id ? "Editar transportadora" : "Cadastrar nova transportadora"} />
 
             <form onSubmit={handleFormSubmit}>
                 <TextField 
-                    label="Descrição" 
+                    label="Nome" 
                     variant="filled" 
                     fullWidth
                     required
-                    name="description" //Nome do campo na tabela
-                    value={paymentMethod.description} //Nome do campo na tabela
+                    name="name" //Nome do campo na tabela
+                    value={carrier.name} //Nome do campo na tabela
                     onChange={handleFormFieldChange}
-                    error={errors?.description}
-                    helperText={errors?.description}
-                />
-
-                <TextField 
-                    label="Taxa de operação" 
-                    variant="filled" 
-                    type="number"
-                    fullWidth
-                    required
-                    name="operator_fee" //Nome do campo na tabela
-                    value={paymentMethod.operator_fee} //Nome do campo na tabela
-                    onChange={handleFormFieldChange}
-                    error={errors?.operator_fee}
-                    helperText={errors?.operator_fee}
+                    error={errors?.name}
+                    helperText={errors?.name}
                 />
 
                 <Fab variant="extended" color="secondary" type="submit">

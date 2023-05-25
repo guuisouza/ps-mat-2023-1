@@ -47,8 +47,11 @@ export default function MainMenu() {
 
         <MenuItem onClick={handleClose} component={Link} to="/"> Início </MenuItem>
 
-
         <MenuItem onClick={handleClose} component={Link} to="/payment_method"> Métodos de pagamento </MenuItem>
+
+        <MenuItem onClick={handleClose} component={Link} to="/shipment_priority"> Descrições </MenuItem>
+
+        <MenuItem onClick={handleClose} component={Link} to="/carrier"> Transportadoras </MenuItem>
       </Menu>
     </div>
   );
