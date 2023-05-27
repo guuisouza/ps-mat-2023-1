@@ -12,6 +12,12 @@ import CarrierList from './pages/carrier/CarrierList'
 import CarrierForm from './pages/carrier/CarrierForm'
 import ChannelList from './pages/channel/ChannelList'
 import ChannelForm from './pages/channel/ChannelForm'
+import OrderStatusList from './pages/order_status/OrderStatusList'
+import OrderStatusForm from './pages/order_status/OrderStatusForm'
+import TagList from './pages/tag/TagList'
+import TagForm from './pages/tag/TagForm'
+import UserList from './pages/user/UserList'
+import UserForm from './pages/user/UserForm' 
 
 //Protect routes
 function AuthGuard({children}) {
@@ -41,6 +47,15 @@ function App() {
             <Route path="/channel" element={<AuthGuard> <ChannelList/> </AuthGuard>}/>
             <Route path="/channel/new" element={<AuthGuard> <ChannelForm/> </AuthGuard>}/>
             <Route path="/channel/:id" element={<AuthGuard> <ChannelForm/> </AuthGuard>}/>
+            <Route path="/order_status" element={<AuthGuard> <OrderStatusList/> </AuthGuard>}/>
+            <Route path="/order_status/new" element={<AuthGuard> <OrderStatusForm/> </AuthGuard>}/>
+            <Route path="/order_status/:id" element={<AuthGuard> <OrderStatusForm/> </AuthGuard>}/>
+            <Route path="/tag" element={<AuthGuard> <TagList/> </AuthGuard>}/>
+            <Route path="/tag/new" element={<AuthGuard> <TagForm/> </AuthGuard>}/>
+            <Route path="/tag/:id" element={<AuthGuard> <TagForm/> </AuthGuard>}/>
+            <Route path="/user" element={<AuthGuard> <UserList/> </AuthGuard>}/>
+            <Route path="/user/new" element={<AuthGuard> <UserForm/> </AuthGuard>}/>
+            <Route path="/user/:id" element={<AuthGuard> <UserForm/> </AuthGuard>}/>
           </Routes>
         </Box>
       </BrowserRouter>

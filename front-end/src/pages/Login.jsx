@@ -17,7 +17,7 @@ export default function Login() {
     const [notif, setNotif] = React.useState({
         show: false,
         message: '',
-        severity: 'sucess' //ou 'error'
+        severity: 'success' //ou 'error'
     })
 
     function handleChange(event) {
