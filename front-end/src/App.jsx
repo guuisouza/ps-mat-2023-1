@@ -18,6 +18,7 @@ import TagList from './pages/tag/TagList'
 import TagForm from './pages/tag/TagForm'
 import UserList from './pages/user/UserList'
 import UserForm from './pages/user/UserForm' 
+import React from 'react'
 
 //Protect routes
 function AuthGuard({children}) {
@@ -28,12 +29,18 @@ function AuthGuard({children}) {
 
 function App() {
 
+  const [isLoggedIn, setIsLoggedIn] = React.useState(false)
+
+  function onLoginLogout(loggedIn){
+    setIsLoggedIn(loggedIn)
+  }
+
   return (
       <BrowserRouter>
-        <HeaderBar />
+        <HeaderBar isLoggedIn={isLoggedIn} onLoginLogout={onLoginLogout}/>
         <Box sx={{ m:'25px auto', p: '25px'}}>
           <Routes>
-            <Route path="/login" element={<Login />}/>
+            <Route path="/login" element={<Login onLoginLogout={onLoginLogout} />}/>
             <Route path="/" element={ <AuthGuard> <Home /> </AuthGuard>}/>
             <Route path="/payment_method" element={<AuthGuard> <PaymentMethodList/> </AuthGuard>}/>
             <Route path="/payment_method/new" element={<AuthGuard> <PaymentMethodForm/> </AuthGuard>}/>

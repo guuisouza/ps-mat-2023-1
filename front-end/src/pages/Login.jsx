@@ -9,7 +9,7 @@ import Notification from '../components/ui/Notification'
 import myfetch from '../utils/myfetch'
 import PageTitle from '../components/ui/PageTitle'
 
-export default function Login() {
+export default function Login({onLoginLogout}) {
     /* Criando 2 variaveis de estado para email e senha e associando aos campos */
     const [email, setEmail] = React.useState('')
     const [password, setPassword] = React.useState('')
@@ -49,6 +49,8 @@ export default function Login() {
                 message: 'Autenticação realizada com sucesso!',
                 severity: 'success'
             })
+
+            onLoginLogout(true)
         }
         catch (error) {
             console.error(error)

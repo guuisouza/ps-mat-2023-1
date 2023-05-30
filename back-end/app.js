@@ -10,7 +10,10 @@ var logger = require('morgan');
 var app = express();
 //Habilita de qualquer origem de front-end possa acessar o back-end
 const cors = require('cors')
-app.use(cors())
+app.use(cors({
+    origin: process.env.FRONT_ORIGIN,
+    credentials: true //Exige o envio de cookie com credenciais
+}))
 
 //Conection BD 
 const db = require('./models')
