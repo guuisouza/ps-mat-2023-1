@@ -21,15 +21,17 @@ import UserForm from './pages/user/UserForm'
 import React from 'react'
 
 //Protect routes
-function AuthGuard({children}) {
-  //Autenticado apenas se tiver um token gravado no local storage
-  if(window.localStorage.getItem('token')) return children
-  else return <Navigate to="/login" replace />
-}
+
 
 function App() {
 
   const [isLoggedIn, setIsLoggedIn] = React.useState(false)
+
+  function AuthGuard({children}) {
+    //Autenticado apenas se tiver um token gravado no local storage
+    if(isLoggedIn) return children
+    else return <Navigate to="/login" replace />
+  }
 
   function onLoginLogout(loggedIn){
     setIsLoggedIn(loggedIn)
