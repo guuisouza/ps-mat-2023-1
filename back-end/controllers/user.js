@@ -147,7 +147,7 @@ controller.login = async (req, res) => {
     }
 }
 
-controller.logout = async(req, res) => {
+controller.logout = (req, res) => {
 
     res.clearCookie('AUTH') // Apaga o cookie
     res.json({auth:false})

@@ -1,5 +1,3 @@
-import { TextareaAutosize } from "@mui/material"
-
 const myfetch = {} //Objeto vazio
 
 //Lê o endereço do back-end a partir do arquivo .env.local
