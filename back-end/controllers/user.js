@@ -122,8 +122,8 @@ controller.login = async (req, res) => {
                 is_admin: user.is_admin,
                 phone: user.phone
             },
-            process.env.TOKEN_SECRET, //Chave para criptografar o token
-            { expiresIn: '24h' } //Duração do token
+                process.env.TOKEN_SECRET, //Chave para criptografar o token
+                { expiresIn: '24h' } //Duração do token
             )
             //Retorna o token -> HTTP 200: OK (Implicito)
             //res.json({auth: true, token})
@@ -135,7 +135,7 @@ controller.login = async (req, res) => {
                 path: '/',
                 maxAge: 24 * 60 * 60 //24 horas, em segundos
             })
-            res.json({auth: true})
+            res.json({ auth: true })
         }
         else {
             //Senha errada -> HTTP 401: Unauthorized
@@ -150,6 +150,6 @@ controller.login = async (req, res) => {
 controller.logout = (req, res) => {
 
     res.clearCookie('AUTH') // Apaga o cookie
-    res.json({auth:false})
+    res.json({ auth: false })
 }
 module.exports = controller
