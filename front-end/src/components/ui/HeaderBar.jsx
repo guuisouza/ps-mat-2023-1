@@ -16,8 +16,8 @@ import myfetch from '../../utils/myfetch';
 export default function HeaderBar({ isLoggedIn, onLoginLogout }) {
 
   const [state, setState] = React.useState({
-    dialogOpen: false,
-    isLoggedIn: false
+    showDialog: false,
+    showWaiting: false
   })
   const {
     showDialog,
@@ -65,7 +65,8 @@ export default function HeaderBar({ isLoggedIn, onLoginLogout }) {
           <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             Startisan
           </Typography>
-          {!isLoggedIn && 
+          {
+            !isLoggedIn && 
             <Button color="inherit" component={Link} to="/login">Entrar</Button>
           }
           {

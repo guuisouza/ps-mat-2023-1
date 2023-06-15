@@ -122,8 +122,8 @@ controller.login = async (req, res) => {
                 is_admin: user.is_admin,
                 phone: user.phone
             },
-                process.env.TOKEN_SECRET, //Chave para criptografar o token
-                { expiresIn: '24h' } //Duração do token
+            process.env.TOKEN_SECRET, //Chave para criptografar o token
+            { expiresIn: '24h' } //Duração do token
             )
             //Retorna o token -> HTTP 200: OK (Implicito)
             //res.json({auth: true, token})
